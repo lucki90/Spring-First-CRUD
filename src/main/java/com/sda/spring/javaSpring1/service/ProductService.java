@@ -15,16 +15,16 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product created(Product product){
+    public Product created(Product product) {
         return productRepository.save(product);
     }
 
-    public List<Product> getAll(){
+    public List<Product> getAll() {
         return productRepository.findAll();
     }
 
     public void delete(Long id) {
-        if(!productRepository.existsById(id)){
+        if (!productRepository.existsById(id)) {
             throw new NotFoundException(String.format("Product with id=%s does not exist", id));
         }
         productRepository.deleteById(id);
@@ -33,18 +33,20 @@ public class ProductService {
 
     public Product getById(Long id) {
         Optional<Product> product = productRepository.findById(id);
-        if(!product.isPresent()){
+        if (!product.isPresent()) {
             throw new NotFoundException(String.format("Product with id=%s does not exist", id));
         }
         return product.get();
     }
 
     public Product update(Long id, Product product) {
-        if(!productRepository.existsById(id)){
+        Optional<Product> savedProduct = productRepository.findById(id);
+        if (!savedProduct.isPresent()) {
             throw new NotFoundException(String.format("Product with id=%s does not exist", id));
         }
-        product.setId(id);
-        return productRepository.save(product);
+        Product dbProduct = savedProduct.get();
+        dbProduct.updateFrom(product);
+        return productRepository.save(dbProduct);
     }
 
     public List<Product> search(String name, Double minPrice, Double maxPrice) {

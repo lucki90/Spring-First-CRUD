@@ -2,11 +2,14 @@ package com.sda.spring.javaSpring1.controller;
 
 
 import com.sda.spring.javaSpring1.model.Receipt;
+import com.sda.spring.javaSpring1.model.Status;
 import com.sda.spring.javaSpring1.service.ReceiptService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,10 +26,24 @@ public class ReceiptController {
         return receiptService.created(receipt);
     }
 
+    //tylko jedna metoda get według RESTa
+//    @GetMapping
+//    @ResponseStatus(HttpStatus.OK)
+//    public List<Receipt> getAll(){
+//        return receiptService.getAll();
+//    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Receipt> getAll(){
-        return receiptService.getAll();
+    public List<Receipt> search(
+            @RequestParam(defaultValue = "") String client,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false)Status status
+            ){
+        return receiptService.search(client, startDate, endDate, status);
     }
 
     @DeleteMapping("/{id}")

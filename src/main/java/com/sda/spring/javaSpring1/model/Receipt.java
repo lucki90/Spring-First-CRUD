@@ -4,6 +4,7 @@ package com.sda.spring.javaSpring1.model;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

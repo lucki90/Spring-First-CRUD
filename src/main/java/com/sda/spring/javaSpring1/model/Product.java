@@ -22,4 +22,13 @@ public class Product {
 //    @ManyToOne
 //    @JoinColumn(name = "receipt_id")
 //    private Receipt receipt;
+
+    public void updateFrom(Product product) {
+        if (product.getName() != null) {
+            this.name = product.getName();
+        }
+        if (product.getPrice() != null) {
+            this.price = product.getPrice();
+        }
+    }
 }
