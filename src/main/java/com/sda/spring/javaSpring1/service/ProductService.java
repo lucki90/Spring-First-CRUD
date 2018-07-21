@@ -1,5 +1,6 @@
 package com.sda.spring.javaSpring1.service;
 
+import com.sda.spring.javaSpring1.exception.NotFoundException;
 import com.sda.spring.javaSpring1.model.Product;
 import com.sda.spring.javaSpring1.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,4 +23,10 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public void delete(Long id) {
+        if(!productRepository.existsById(id)){
+            throw new NotFoundException(String.format("Product with id=%s does not exist", id));
+        }
+        productRepository.deleteById(id);
+    }
 }
