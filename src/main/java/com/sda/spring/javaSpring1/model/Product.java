@@ -19,7 +19,7 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
-    @ManyToOne
-    @JoinColumn(name = "receipt_id")
-    private Receipt receipt;
+//    @ManyToOne
+//    @JoinColumn(name = "receipt_id")
+//    private Receipt receipt;
 }

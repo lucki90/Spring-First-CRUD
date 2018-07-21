@@ -24,8 +24,17 @@ public class Receipt {
     private LocalDateTime date;
 
     @Column(nullable = false, name = "status")
+    @Enumerated(EnumType.STRING)
     private Status status;
 
-    @OneToMany(mappedBy = "receipt")
+//    @OneToMany(mappedBy = "receipt")
+//    private List<Product> products;
+
+    // ManyToMany zamiast OneToMany i ManyToOne w Product
+    @ManyToMany
+    @JoinTable(
+            name = "receipt_products",
+            joinColumns = @JoinColumn(name = "receipt_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "product_id", nullable = false))
     private List<Product> products;
 }
