@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/receipt")
@@ -41,9 +42,10 @@ public class ReceiptController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false)Status status
+            @RequestParam(required = false)Set<Status> status
             ){
-        return receiptService.search(client, startDate, endDate, status);
+        return receiptService.searchByClient(client);
+//        rereturn receiptService.search(client, startDate, endDate, status);
     }
 
     @DeleteMapping("/{id}")

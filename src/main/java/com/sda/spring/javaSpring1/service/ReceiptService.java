@@ -11,8 +11,12 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Service
 public class ReceiptService {
@@ -20,33 +24,35 @@ public class ReceiptService {
     @Autowired
     private ReceiptRepository receiptRepository;
 
-    public Receipt created(Receipt receipt){
+    public Receipt created(Receipt receipt) {
         return receiptRepository.save(receipt);
     }
 
-    public List<Receipt> getAll(){
+    public List<Receipt> getAll() {
         return receiptRepository.findAll();
     }
 
-    public List<Receipt> search(String client, LocalDate startDate, LocalDate endDate, Status status) {
-        if (startDate==null){
-            startDate = LocalDate.of(2000,1,1);
+    public List<Receipt> search(String client, LocalDate startDate, LocalDate endDate, Set<Status> statuses) {
+        if (startDate == null) {
+            startDate = LocalDate.of(2000, 1, 1);
         }
-        if (endDate==null){
-            endDate = LocalDate.of(2020,1,1);
+        if (endDate == null) {
+            endDate = LocalDate.of(2020, 1, 1);
         }
-        if (status == null){
-            return receiptRepository.findByClientContainingAndDateBetween(
-                    client,startDate.atStartOfDay(),
-                    endDate.atTime(LocalTime.MAX));
+        if (isEmpty(statuses)) {
+            Set<Status> allStatuses = new HashSet<>();
+            allStatuses.add(Status.DELIVERED);
+            allStatuses.add(Status.INITIATED);
+            allStatuses.add(Status.SUBMITED);
+            statuses = allStatuses;
         }
-        return receiptRepository.findByClientContainingAndDateBetweenAndStatus(
-                client,startDate.atStartOfDay(),
-                endDate.atTime(LocalTime.MAX), status);
+        return receiptRepository.findByClientContainingAndDateBetweenAndStatusIn(
+                client, startDate.atStartOfDay(),
+                endDate.atTime(LocalTime.MAX), statuses);
     }
 
     public void delete(Long id) {
-        if(!receiptRepository.existsById(id)){
+        if (!receiptRepository.existsById(id)) {
             throw new NotFoundException(String.format("Receipt with id=%s does not exist", id));
         }
         receiptRepository.deleteById(id);
@@ -54,17 +60,22 @@ public class ReceiptService {
 
     public Receipt getById(Long id) {
         Optional<Receipt> receipt = receiptRepository.findById(id);
-        if(!receipt.isPresent()){
+        if (!receipt.isPresent()) {
             throw new NotFoundException(String.format("Receipt with id=%s does not exist", id));
         }
         return receipt.get();
     }
 
     public Receipt update(Long id, Receipt receipt) {
-        if(!receiptRepository.existsById(id)){
+        if (!receiptRepository.existsById(id)) {
             throw new NotFoundException(String.format("Receipt with id=%s does not exist", id));
         }
         receipt.setId(id);
         return receiptRepository.save(receipt);
     }
+
+    public List<Receipt> searchByClient(String client) {
+        return receiptRepository.search(client);
+    }
+
 }
